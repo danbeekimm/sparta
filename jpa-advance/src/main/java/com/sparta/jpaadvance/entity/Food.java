@@ -34,4 +34,9 @@ public class Food {
     ) // 중간테이블생성
 
     private List<User> userList = new ArrayList<>();
+
+    public void addUserList(User user) {
+        this.userList.add(user);
+        user.getFoodList().add(this);
+    }
 }

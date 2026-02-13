@@ -34,8 +34,8 @@ public class OneToManyTest {
         Food food = new Food();
         food.setName("츼킨");
         food.setPrice(10000);
-        food.getUserList().add(user);
-        food.getUserList().add(user2);
+//        food.getUserList().add(user);
+//        food.getUserList().add(user2);
 
         userRepository.save(user);
         userRepository.save(user2);
@@ -48,11 +48,11 @@ public class OneToManyTest {
         Food food = foodRepository.findById(2L).orElseThrow(NullPointerException::new);
         System.out.println("food.getName() = " + food.getName());
 
-        // 해당 음식을 주문한 고객 정보 조회
-        List<User> userList = food.getUserList();
-        for (User user : userList) {
-            System.out.println("user.getName() = " + user.getName());
-        }
+//        // 해당 음식을 주문한 고객 정보 조회
+//        List<User> userList = food.getUserList();
+//        for (User user : userList) {
+//            System.out.println("user.getName() = " + user.getName());
+//        }
     }
 
 

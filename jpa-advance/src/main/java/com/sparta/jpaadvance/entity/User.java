@@ -25,11 +25,13 @@ public class User {
 //        food.setUser(this);
 //    }
 
-    @ManyToMany (mappedBy = "userList")
-    private List<Food> foodList = new ArrayList<>();
-
-    public void addFoodList(Food food) {
-        this.foodList.add(food);
-        food.getUserList().add(this);
-    }
+//    @ManyToMany (mappedBy = "userList")
+//    private List<Food> foodList = new ArrayList<>();
+//
+//    public void addFoodList(Food food) {
+//        this.foodList.add(food);
+//        food.getUserList().add(this);
+//    }
+    @OneToMany(mappedBy = "user")
+    private List<Order> orderList = new ArrayList<>();
 }

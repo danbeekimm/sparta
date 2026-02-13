@@ -17,11 +17,11 @@ public class User {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "user")
-    private List<Food> foodList = new ArrayList<>();
-
-    public void addFoodList(Food food) {
-        this.foodList.add(food);
-        food.setUser(this);
-    }
+//    @OneToMany(mappedBy = "user")
+//    private List<Food> foodList = new ArrayList<>();
+//
+//    public void addFoodList(Food food) {
+//        this.foodList.add(food);
+//        food.setUser(this);
+//    }
 }

@@ -3,15 +3,20 @@ package com.sparta.myselectshop.service;
 import com.sparta.myselectshop.dto.ProductMypriceRequestDto;
 import com.sparta.myselectshop.dto.ProductRequestDto;
 import com.sparta.myselectshop.dto.ProductResponseDto;
-import com.sparta.myselectshop.entity.Product;
+import com.sparta.myselectshop.entity.*;
 import com.sparta.myselectshop.naver.dto.ItemDto;
+import com.sparta.myselectshop.repository.FolderRepository;
 import com.sparta.myselectshop.repository.ProductRepository;
-import jakarta.transaction.Transactional;
+import com.sparta.myselectshop.repository.productFolderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,9 +24,12 @@ import java.util.List;
 public class ProductService {
     public static final int MIN_MY_PRICE = 100;
     private final ProductRepository productRepository;
+    private final FolderRepository folderRepository;
+    private final productFolderRepository productFolderRepository;
 
-    public ProductResponseDto createProduct(ProductRequestDto requestDto) {
-        Product product = productRepository.save(new Product(requestDto));
+
+    public ProductResponseDto createProduct(ProductRequestDto requestDto, User user) {
+        Product product = productRepository.save(new Product(requestDto, user));
         return new ProductResponseDto(product);
     }
 
@@ -40,14 +48,24 @@ public class ProductService {
         return new ProductResponseDto(product);
     }
 
-    public List<ProductResponseDto> getProducts() {
-        List<Product> productList = productRepository.findAll();
-        List<ProductResponseDto> responseDtoList = new ArrayList<>();
+    @Transactional(readOnly = true)
+    public Page<ProductResponseDto> getProducts(User user, int page, int size, String sortBy, Boolean isAsc) {
+        Sort.Direction direction = isAsc  ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        for (Product product : productList) {
-            responseDtoList.add(new ProductResponseDto(product));
+        // 권한 확인
+        UserRoleEnum userRole = user.getRole();
+
+        Page<Product> productList ;
+
+        if (userRole == UserRoleEnum.USER) {
+            productList = productRepository.findAllByUser(user, pageable);
+        } else {
+            productList = productRepository.findAll(pageable);
         }
-        return responseDtoList;
+
+        return productList.map(ProductResponseDto::new);
     }
 
     @Transactional
@@ -57,4 +75,40 @@ public class ProductService {
                 );
         product.updateByItemDto(itemDto);
     }
+
+    public void addFoler(Long productId, Long folderId, User user) {
+        Product product = productRepository.findById(productId).orElseThrow(()->
+                new NullPointerException("해당상품 존재안함"));
+        Folder folder = folderRepository.findById(folderId).orElseThrow(()->
+                new NullPointerException("해당상품 존재안함"));
+
+        if (!product.getUser().getId().equals(user.getId())
+                || !folder.getUser().getId().equals(user.getId())){
+            throw new IllegalArgumentException("회원님의 관심상품이나 폴더가 아님");
+
+        }
+
+        Optional<ProductFolder> overlapFolder = productFolderRepository.findByProductAndFolder(product,folder);
+
+        if (overlapFolder.isPresent()){
+            throw new IllegalArgumentException("중복된 폴더입니다");
+
+        }
+
+        productFolderRepository.save(new ProductFolder(product,folder));
+    }
+
+    public Page<ProductResponseDto> getProudctsInFolder(Long folderId, int page, int size, String sortBy, boolean isAsc, User user) {
+        Sort.Direction direction = isAsc  ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Product> productList =  productRepository.findAllByUserAndProductFolderList_FolderId(user, folderId, pageable);
+
+        Page<ProductResponseDto> responseDtosList = productList.map(ProductResponseDto::new);
+
+        return responseDtosList;
+    }
+
+
 }

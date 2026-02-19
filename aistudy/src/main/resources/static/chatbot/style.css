@@ -1,0 +1,42 @@
+:root {
+    --primary-sky: #87CEEB;
+    --light-sky: #E1F5FE;
+    --dark-sky: #0288D1;
+    --white: #ffffff;
+    --bg-gray: #f8f9fa;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg-gray); font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; justify-content: center; align-items: center; }
+
+.chat-wrapper { width: 450px; height: 700px; background: var(--white); border-radius: 15px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
+
+/* Header */
+.chat-header { background: var(--primary-sky); color: white; padding: 20px; display: flex; align-items: center; gap: 10px; }
+.status-indicator { width: 10px; height: 10px; background: #4CAF50; border-radius: 50%; }
+
+/* Chat Body (Smooth Scroll) */
+.chat-body { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth; background: #fdfdfd; }
+
+/* Messages */
+.message-row { display: flex; width: 100%; }
+.message-row.user { justify-content: flex-end; }
+.message-row.ai { justify-content: flex-start; }
+
+.bubble { max-width: 80%; padding: 12px 16px; border-radius: 18px; font-size: 14.5px; line-height: 1.5; position: relative; }
+.user .bubble { background: var(--primary-sky); color: white; border-bottom-right-radius: 2px; }
+.ai .bubble { background: var(--light-sky); color: #333; border-bottom-left-radius: 2px; }
+
+/* Waiting Animation */
+.typing { display: flex; gap: 4px; padding: 10px; }
+.dot { width: 6px; height: 6px; background: var(--dark-sky); border-radius: 50%; animation: blink 1.4s infinite both; }
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink { 0%, 80%, 100% { opacity: 0; } 40% { opacity: 1; } }
+
+/* Input */
+.chat-input-container { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; }
+#userInput { flex: 1; border: 1px solid #ddd; border-radius: 25px; padding: 10px 20px; outline: none; transition: 0.3s; }
+#userInput:focus { border-color: var(--primary-sky); }
+#sendBtn { background: var(--primary-sky); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }

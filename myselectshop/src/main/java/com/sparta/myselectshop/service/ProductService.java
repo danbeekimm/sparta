@@ -7,7 +7,7 @@ import com.sparta.myselectshop.entity.*;
 import com.sparta.myselectshop.naver.dto.ItemDto;
 import com.sparta.myselectshop.repository.FolderRepository;
 import com.sparta.myselectshop.repository.ProductRepository;
-import com.sparta.myselectshop.repository.productFolderRepository;
+import com.sparta.myselectshop.repository.ProductFolderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,7 +25,7 @@ public class ProductService {
     public static final int MIN_MY_PRICE = 100;
     private final ProductRepository productRepository;
     private final FolderRepository folderRepository;
-    private final productFolderRepository productFolderRepository;
+    private final ProductFolderRepository productFolderRepository;
 
 
     public ProductResponseDto createProduct(ProductRequestDto requestDto, User user) {

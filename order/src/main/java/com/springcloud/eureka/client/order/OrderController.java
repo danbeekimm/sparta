@@ -11,9 +11,10 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @GetMapping("/order/{orderId}")
-    public String order(@PathVariable("orderId") String orderId){
-        return orderService.getOrder(orderId);
+    @GetMapping("/order")
+    public String order(){
+        //return orderService.getOrder(orderId);
+        return "order detail";
     }
 
 }
